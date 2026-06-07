@@ -49,9 +49,6 @@ button,input{font-family:Georgia,serif}
 .timer-fill{height:100%;border-radius:99px;transition:width .1s linear,background .5s;position:relative}
 .timer-num{font-size:13px;font-weight:bold;min-width:28px;text-align:right}
 
-/* PEIXE */
-#fish-wrap{position:relative;height:28px;overflow:visible;pointer-events:none}
-#fish-emoji{position:absolute;font-size:20px;top:0;transition:none;line-height:1}
 
 /* BADGES */
 .badges-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
@@ -122,21 +119,19 @@ button,input{font-family:Georgia,serif}
 .ach-name{font-size:13px;font-weight:bold;color:#fff}
 .ach-desc{font-size:11px;color:rgba(255,255,255,.5)}
 
-/* PEIXE FUGINDO */
-@keyframes fishEscape{
-  0%  {transform:translateX(0) scaleX(1);opacity:1}
-  20% {transform:translateX(12px) scaleX(-1);opacity:1}
-  60% {transform:translateX(120px) scaleX(-1);opacity:1}
-  80% {transform:translateX(180px) scaleX(-1) translateY(-8px);opacity:.6}
-  100%{transform:translateX(260px) scaleX(-1) translateY(-16px);opacity:0}
+/* BOLHAS */
+#bubble-wrap{position:relative;height:28px;overflow:visible;pointer-events:none}
+.bubble{position:absolute;bottom:0;border-radius:50%;border:1.5px solid rgba(100,200,255,0.7);background:rgba(100,200,255,0.12);opacity:0}
+@keyframes bubbleRise{
+  0%  {transform:translateY(0) scale(1);opacity:.8}
+  70% {opacity:.5}
+  100%{transform:translateY(-30px) scale(1.15);opacity:0}
 }
-.fish-escaping{animation:fishEscape 1.4s ease-in forwards}
-
-@keyframes fishNormal{
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-3px)}
+@keyframes bubbleBurst{
+  0%  {transform:translateY(0) scale(0.5);opacity:1}
+  50% {transform:translateY(-22px) scale(1.4);opacity:.8}
+  100%{transform:translateY(-52px) scale(2);opacity:0}
 }
-.fish-idle{animation:fishNormal 1.8s ease-in-out infinite}
 </style>
 </head>
 <body>
@@ -176,10 +171,8 @@ button,input{font-family:Georgia,serif}
   <div class="g-body">
     <div class="q-count" id="q-count"></div>
 
-    <!-- PEIXE + TIMER -->
-    <div id="fish-wrap">
-      <span id="fish-emoji" class="fish-idle">🐟</span>
-    </div>
+    <!-- BOLHAS + TIMER -->
+    <div id="bubble-wrap" aria-hidden="true"></div>
     <div class="timer-row">
       <span class="timer-ico">⏱</span>
       <div class="timer-wrap"><div class="timer-fill" id="t-bar" style="width:100%;background:#009c3b"></div></div>
@@ -411,17 +404,37 @@ try{unlockedAch=JSON.parse(localStorage.getItem("bcAch3")||"[]");}catch{}
 function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
 function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
 
-// ===== PEIXE =====
-function resetFish(){
-  const f=document.getElementById('fish-emoji');
-  f.className='fish-idle';
-  f.textContent='🐟';
-  f.style.left='0px';
+// ===== BOLHAS =====
+let bubbleInt=null;
+function resetBubbles(){
+  clearInterval(bubbleInt);
+  const wrap=document.getElementById('bubble-wrap');
+  wrap.innerHTML='';
+  // Emite bolhinhas periódicas enquanto o timer corre
+  bubbleInt=setInterval(()=>{
+    spawnBubble(wrap,'rise');
+  },600);
 }
-function escapeFish(){
-  const f=document.getElementById('fish-emoji');
-  f.className='fish-escaping';
-  f.textContent='🐟';
+function spawnBubble(wrap,type){
+  const wrapW=wrap.offsetWidth||300;
+  const b=document.createElement('span');
+  b.className='bubble';
+  const sz=type==='burst'? (8+Math.random()*10) : (4+Math.random()*6);
+  b.style.width=sz+'px';
+  b.style.height=sz+'px';
+  b.style.left=Math.random()*Math.max(1,wrapW-sz)+'px';
+  const dur=type==='burst'? (0.6+Math.random()*0.4) : (0.8+Math.random()*0.6);
+  b.style.animation=(type==='burst'?'bubbleBurst':'bubbleRise')+' '+dur.toFixed(2)+'s ease-out forwards';
+  wrap.appendChild(b);
+  setTimeout(()=>b.remove(), dur*1000+100);
+}
+function burstBubbles(){
+  clearInterval(bubbleInt);
+  const wrap=document.getElementById('bubble-wrap');
+  // Dispara várias bolhas de uma vez simulando fuga
+  for(let i=0;i<12;i++){
+    setTimeout(()=>spawnBubble(wrap,'burst'), i*60);
+  }
 }
 
 // ===== JOGO =====
@@ -473,7 +486,7 @@ function renderQ(){
     });
   }
 
-  resetFish();
+  resetBubbles();
   timerMax=DIFF_TIME[current.diff];timeLeft=timerMax;
   clearInterval(timerInt);updateTimer();
   timerInt=setInterval(()=>{
@@ -492,19 +505,11 @@ function updateTimer(){
   v.textContent=Math.ceil(timeLeft)+'s';
   v.style.color=pct>50?'#a8d5b5':pct>25?'#ffd070':'#ff7070';
 
-  // Peixe se move da esquerda para a direita acompanhando o timer
-  const wrap=document.getElementById('fish-wrap');
-  const wrapW=wrap.offsetWidth||300;
-  const fishX=Math.round((1-(pct/100))*(wrapW-28));
-  const fish=document.getElementById('fish-emoji');
-  if(fish.className==='fish-idle'){
-    fish.style.left=fishX+'px';
-  }
 }
 
 function timeExpired(){
   if(answered)return;
-  escapeFish();
+  burstBubbles();
   // Pequeno delay para a animação aparecer antes de processar
   setTimeout(()=>processAns(false,-1),800);
 }
