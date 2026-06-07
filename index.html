@@ -4,14 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>Brasil Curioso</title>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{background:#0a1f3c;font-family:Georgia,'Times New Roman',serif;color:#fff;min-height:100vh}
 button,input{font-family:Georgia,serif}
-
 .screen{display:none;flex-direction:column;min-height:100vh}
 .screen.active{display:flex}
 
+/* HOME */
 #home{background:linear-gradient(150deg,#0a2342,#1b4332);align-items:center;justify-content:center;padding:32px 20px;gap:18px}
 .home-flag{font-size:56px;text-align:center}
 .home-title{color:#ffd700;font-size:32px;font-weight:bold;letter-spacing:1px;text-align:center;text-shadow:0 2px 10px rgba(0,0,0,.5)}
@@ -25,6 +30,7 @@ button,input{font-family:Georgia,serif}
 .tag{background:rgba(255,255,255,.1);border-radius:20px;padding:5px 13px;color:#a8d5b5;font-size:12px}
 .btn-rank-home{background:transparent;border:1px solid rgba(255,215,0,.35);border-radius:10px;color:#ffd700;padding:9px 22px;font-size:13px;cursor:pointer}
 
+/* GAME */
 #game{background:linear-gradient(150deg,#0a2342,#0d3b2a)}
 .g-header{display:flex;align-items:center;gap:10px;padding:11px 15px;border-bottom:1px solid rgba(255,255,255,.08)}
 .btn-home-ic{background:transparent;border:none;color:rgba(255,255,255,.55);font-size:22px;cursor:pointer;padding:3px;line-height:1}
@@ -33,16 +39,21 @@ button,input{font-family:Georgia,serif}
 .g-prog{height:100%;background:linear-gradient(90deg,#009c3b,#ffd700);border-radius:99px;transition:width .35s}
 .g-score-box{display:flex;align-items:center;gap:8px;font-size:13px;color:#ffd700;min-width:72px;justify-content:flex-end}
 .g-streak-lbl{color:#ff7043;font-size:12px}
-
 .g-body{flex:1;padding:15px;display:flex;flex-direction:column;gap:11px;overflow-y:auto}
 .q-count{font-size:11px;color:rgba(255,255,255,.4)}
 
-.timer-row{display:flex;align-items:center;gap:10px}
+/* TIMER */
+.timer-row{display:flex;align-items:center;gap:10px;position:relative}
 .timer-ico{font-size:16px;color:rgba(255,255,255,.4)}
-.timer-wrap{flex:1;height:6px;background:rgba(255,255,255,.12);border-radius:99px;overflow:hidden}
-.timer-fill{height:100%;border-radius:99px;transition:width .1s linear,background .5s}
+.timer-wrap{flex:1;height:8px;background:rgba(255,255,255,.12);border-radius:99px;overflow:visible;position:relative}
+.timer-fill{height:100%;border-radius:99px;transition:width .1s linear,background .5s;position:relative}
 .timer-num{font-size:13px;font-weight:bold;min-width:28px;text-align:right}
 
+/* PEIXE */
+#fish-wrap{position:relative;height:28px;overflow:visible;pointer-events:none}
+#fish-emoji{position:absolute;font-size:20px;top:0;transition:none;line-height:1}
+
+/* BADGES */
 .badges-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .diff-badge{display:inline-block;border-radius:20px;padding:3px 11px;font-size:11px;font-weight:bold;letter-spacing:.5px}
 .d-easy{background:rgba(0,156,59,.2);color:#5dca85;border:1px solid rgba(0,156,59,.3)}
@@ -63,7 +74,6 @@ button,input{font-family:Georgia,serif}
 .ans-correct{background:rgba(0,156,59,.25)!important;border:2px solid #009c3b!important}
 .ans-wrong{background:rgba(220,50,50,.25)!important;border:2px solid #dc3232!important}
 .ml-correct{background:#009c3b!important}
-
 .exp-box{border-radius:13px;padding:14px}
 .exp-ok{background:rgba(0,156,59,.13);border:1px solid rgba(0,156,59,.35)}
 .exp-bad{background:rgba(220,50,50,.13);border:1px solid rgba(220,50,50,.35)}
@@ -71,6 +81,7 @@ button,input{font-family:Georgia,serif}
 .exp-text{font-size:13px;line-height:1.6;color:rgba(255,255,255,.72)}
 .btn-next{padding:14px;border-radius:13px;background:linear-gradient(135deg,#009c3b,#007a2f);color:#fff;font-weight:bold;font-size:15px;border:none;cursor:pointer;text-align:center}
 
+/* RESULT */
 #result{background:linear-gradient(150deg,#0a2342,#1b4332);align-items:center;justify-content:center;padding:32px 20px;gap:14px}
 .res-medal{font-size:64px;text-align:center}
 .res-title{color:#ffd700;font-size:26px;font-weight:bold;text-align:center}
@@ -84,7 +95,8 @@ button,input{font-family:Georgia,serif}
 .btn-again{padding:12px 24px;border-radius:12px;background:linear-gradient(135deg,#009c3b,#c8a400);color:#0a2342;font-weight:bold;border:none;cursor:pointer;font-size:14px}
 .btn-rank-r{padding:12px 24px;border-radius:12px;background:rgba(255,215,0,.12);color:#ffd700;border:1px solid rgba(255,215,0,.35);cursor:pointer;font-size:14px}
 
-#ranking{background:linear-gradient(150deg,#0a2342,#1b4332);padding:20px}
+/* RANKING */
+#ranking{background:linear-gradient(150deg,#0a2342,#1b4332);padding:20px;flex:1}
 .rank-head{display:flex;align-items:center;gap:12px;margin-bottom:18px}
 .btn-back{background:transparent;border:none;color:#ffd700;font-size:22px;cursor:pointer;padding:3px}
 .rank-title{color:#ffd700;font-size:22px;font-weight:bold}
@@ -97,8 +109,9 @@ button,input{font-family:Georgia,serif}
 .rank-name{font-weight:bold;font-size:14px;color:#fff}
 .rank-detail{font-size:11px;color:rgba(255,255,255,.45)}
 .rank-pts{font-weight:bold;color:#ffd700;font-size:18px;margin-left:auto}
-.rank-empty{color:rgba(255,255,255,.45);text-align:center;padding:32px;font-size:14px}
+.rank-status{color:rgba(255,255,255,.4);text-align:center;padding:28px;font-size:13px}
 
+/* CONQUISTA */
 .ach-toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
   background:#0a2342;border:2px solid #ffd700;border-radius:16px;padding:13px 20px;
   display:flex;align-items:center;gap:12px;min-width:240px;z-index:999;
@@ -108,14 +121,31 @@ button,input{font-family:Georgia,serif}
 .ach-unlock{color:#ffd700;font-size:11px;font-weight:bold}
 .ach-name{font-size:13px;font-weight:bold;color:#fff}
 .ach-desc{font-size:11px;color:rgba(255,255,255,.5)}
+
+/* PEIXE FUGINDO */
+@keyframes fishEscape{
+  0%  {transform:translateX(0) scaleX(1);opacity:1}
+  20% {transform:translateX(12px) scaleX(-1);opacity:1}
+  60% {transform:translateX(120px) scaleX(-1);opacity:1}
+  80% {transform:translateX(180px) scaleX(-1) translateY(-8px);opacity:.6}
+  100%{transform:translateX(260px) scaleX(-1) translateY(-16px);opacity:0}
+}
+.fish-escaping{animation:fishEscape 1.4s ease-in forwards}
+
+@keyframes fishNormal{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-3px)}
+}
+.fish-idle{animation:fishNormal 1.8s ease-in-out infinite}
 </style>
 </head>
 <body>
 
+<!-- HOME -->
 <div id="home" class="screen active">
   <div class="home-flag">🇧🇷</div>
   <h1 class="home-title">Brasil Curioso</h1>
-  <p class="home-sub">100 curiosidades · história · natureza · cultura</p>
+  <p class="home-sub">20 perguntas · história · natureza · cultura</p>
   <div class="home-card">
     <p class="home-label">SEU NOME</p>
     <input id="name-in" class="name-input" type="text" maxlength="28" placeholder="Como quer ser chamado?">
@@ -127,10 +157,12 @@ button,input{font-family:Georgia,serif}
     <span class="tag">🎶 Cultura</span>
     <span class="tag">⏱️ Timer</span>
     <span class="tag">⭐ Dificuldade</span>
+    <span class="tag">🌎 Ranking Global</span>
   </div>
-  <button class="btn-rank-home" onclick="showRanking()">🏆 Ranking</button>
+  <button class="btn-rank-home" onclick="showRanking()">🏆 Ranking Global</button>
 </div>
 
+<!-- GAME -->
 <div id="game" class="screen">
   <div class="g-header">
     <button class="btn-home-ic" onclick="confirmHome()" title="Voltar ao início">🏠</button>
@@ -143,11 +175,17 @@ button,input{font-family:Georgia,serif}
   </div>
   <div class="g-body">
     <div class="q-count" id="q-count"></div>
+
+    <!-- PEIXE + TIMER -->
+    <div id="fish-wrap">
+      <span id="fish-emoji" class="fish-idle">🐟</span>
+    </div>
     <div class="timer-row">
       <span class="timer-ico">⏱</span>
       <div class="timer-wrap"><div class="timer-fill" id="t-bar" style="width:100%;background:#009c3b"></div></div>
       <span class="timer-num" id="t-val" style="color:#a8d5b5"></span>
     </div>
+
     <div class="badges-row">
       <span class="diff-badge" id="diff-b"></span>
       <span class="cat-badge" id="cat-b"></span>
@@ -167,6 +205,7 @@ button,input{font-family:Georgia,serif}
   </div>
 </div>
 
+<!-- RESULT -->
 <div id="result" class="screen">
   <div class="res-medal" id="res-medal"></div>
   <div class="res-title">Missão Concluída!</div>
@@ -179,18 +218,20 @@ button,input{font-family:Georgia,serif}
   </div>
   <div class="res-btns">
     <button class="btn-again" onclick="playAgain()">Jogar novamente</button>
-    <button class="btn-rank-r" onclick="showRanking()">🏆 Ranking</button>
+    <button class="btn-rank-r" onclick="showRanking()">🏆 Ranking Global</button>
   </div>
 </div>
 
+<!-- RANKING -->
 <div id="ranking" class="screen">
   <div class="rank-head">
     <button class="btn-back" onclick="showScreen('home')">←</button>
-    <div class="rank-title">🏆 Ranking Local</div>
+    <div class="rank-title">🏆 Ranking Global</div>
   </div>
-  <div id="rank-list"></div>
+  <div id="rank-list"><div class="rank-status">Carregando...</div></div>
 </div>
 
+<!-- CONQUISTA TOAST -->
 <div class="ach-toast" id="ach-toast">
   <div class="ach-ic" id="ach-ic"></div>
   <div>
@@ -201,6 +242,53 @@ button,input{font-family:Georgia,serif}
 </div>
 
 <script>
+// ===== FIREBASE =====
+const firebaseConfig = {
+  apiKey: "AIzaSyCbXi3UCVl8oLleBzGb6DqWSxbZmZU2yDQ",
+  authDomain: "jogos-ranking.firebaseapp.com",
+  projectId: "jogos-ranking",
+  storageBucket: "jogos-ranking.firebasestorage.app",
+  messagingSenderId: "958784915420",
+  appId: "1:958784915420:web:4212d3ad278f02d600f119"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const GAME_ID = "brasil-curioso";
+const scoresRef = () => db.collection("games").doc(GAME_ID).collection("scores");
+
+async function saveToFirebase(entry) {
+  try {
+    await scoresRef().add({
+      name: entry.name,
+      score: entry.score,
+      correct: entry.correct,
+      total: entry.total,
+      maxStreak: entry.maxStreak,
+      date: entry.date,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  } catch(e) {
+    console.warn("Firebase save error:", e);
+  }
+}
+
+async function loadFromFirebase() {
+  try {
+    const snap = await scoresRef().orderBy("score","desc").limit(20).get();
+    return snap.docs.map(d => d.data());
+  } catch(e) {
+    console.warn("Firebase load error:", e);
+    return [];
+  }
+}
+
+// ===== DADOS =====
+const TOTAL_QS = 20;
+const DIFF_TIME = {easy:20, medium:15, hard:10};
+const DIFF_PTS  = {easy:10, medium:15, hard:25};
+const DIFF_LABEL= {easy:"Fácil ★", medium:"Médio ★★", hard:"Difícil ★★★"};
+const CAT_COLORS= {"Origem":"#2d6a4f","Colonização":"#8b4513","Política":"#1a3a6b","Natureza":"#2d6a4f","História":"#5c3317","Cultura":"#9b2335","Fauna":"#4a7c59","Território":"#1b7a8e","Indígenas":"#c27d38","Fronteiras":"#4a4a8a","Capitais":"#8b3a62","Economia":"#3d5a80","Ciência":"#0a4d68","Saúde":"#b5283e","Religião":"#7b5ea7","Arquitetura":"#c47e2b","Esporte":"#016301","Arte":"#c45c26","Água":"#0077b6","Música":"#6a0572","Identidade":"#c9a227"};
+
 const QUESTIONS=[
   {id:1,type:"tf",cat:"Origem",diff:"easy",q:"O nome 'Brasil' vem da madeira pau-brasil, explorada pelos portugueses pelo seu pigmento vermelho.",ans:true,exp:"Exato. O pau-brasil (Caesalpinia echinata) tinha madeira avermelhada como brasa. Os portugueses chamaram-na de 'brasil' e o nome foi transferido para a terra."},
   {id:2,type:"tf",cat:"Colonização",diff:"easy",q:"Pedro Álvares Cabral chegou ao Brasil em 22 de abril de 1500.",ans:true,exp:"Correto. A frota de Cabral avistou o Monte Pascoal no litoral baiano em 22 de abril de 1500."},
@@ -208,141 +296,153 @@ const QUESTIONS=[
   {id:4,type:"tf",cat:"Natureza",diff:"easy",q:"O Rio Amazonas é o maior do mundo em volume de água.",ans:true,exp:"Correto. O Amazonas carrega cerca de 20% de toda a água doce que vai para os oceanos no mundo."},
   {id:5,type:"tf",cat:"Natureza",diff:"easy",q:"A vitória-régia é o símbolo floral da Amazônia.",ans:true,exp:"Sim. A vitória-régia (Victoria amazonica) é ícone da Amazônia, com folhas que chegam a 3 metros de diâmetro."},
   {id:6,type:"tf",cat:"História",diff:"medium",q:"A Guerra dos Farrapos durou 10 anos e foi a guerra civil mais longa do Brasil.",ans:true,exp:"Correto. A Revolução Farroupilha (1835–1845) durou exatamente 10 anos, a guerra civil mais longa da história brasileira."},
-  {id:7,type:"tf",cat:"Cultura",diff:"medium",q:"O carnaval brasileiro tem origem totalmente indígena.",ans:false,exp:"Errado. O carnaval tem origem europeia (entrudo português) com forte influência africana. Indígenas não têm relação direta."},
+  {id:7,type:"tf",cat:"Cultura",diff:"medium",q:"O carnaval brasileiro tem origem totalmente indígena.",ans:false,exp:"Errado. O carnaval tem origem europeia (entrudo português) com forte influência africana. Indígenas não têm relação direta com a festa."},
   {id:8,type:"tf",cat:"Fauna",diff:"easy",q:"A onça-pintada é o maior felino das Américas.",ans:true,exp:"Correto. A onça-pintada (Panthera onca) pode pesar até 120 kg e é o maior felino do continente americano."},
   {id:9,type:"tf",cat:"História",diff:"easy",q:"O Brasil foi o último país das Américas a abolir a escravidão.",ans:true,exp:"Sim. A Lei Áurea foi assinada em 13 de maio de 1888, tornando o Brasil o último do continente a abolir a escravidão."},
   {id:10,type:"tf",cat:"Território",diff:"easy",q:"O Brasil é o maior país da América do Sul e o quinto maior do mundo.",ans:true,exp:"Correto. Com 8,5 milhões de km², o Brasil só perde para Rússia, Canadá, EUA e China."},
   {id:11,type:"tf",cat:"Indígenas",diff:"medium",q:"Os Tupinambá eram o grupo indígena mais numeroso no litoral quando os portugueses chegaram.",ans:true,exp:"Sim. Os Tupinambá dominavam grande parte do litoral e foram os primeiros a ter contato intenso com os colonizadores."},
   {id:12,type:"tf",cat:"Política",diff:"easy",q:"A capital do Brasil sempre foi Brasília.",ans:false,exp:"Errado. Salvador foi a primeira capital (1549–1763), depois Rio de Janeiro (1763–1960). Brasília só em 1960."},
-  {id:13,type:"mc",cat:"Origem",diff:"easy",q:"Qual foi a primeira capital estabelecida pelos portugueses no Brasil?",opts:["Salvador","Porto Seguro","São Paulo","Rio de Janeiro"],ans:0,exp:"Salvador (Bahia), fundada em 1549 por Tomé de Sousa. Porto Seguro foi o local do 'achamento', mas nunca foi capital."},
-  {id:14,type:"mc",cat:"Política",diff:"easy",q:"Quem foi o primeiro presidente do Brasil?",opts:["Prudente de Morais","Floriano Peixoto","Deodoro da Fonseca","Dom Pedro II"],ans:2,exp:"Marechal Deodoro da Fonseca proclamou a República em 15 de novembro de 1889 e tornou-se o primeiro presidente."},
-  {id:15,type:"mc",cat:"Natureza",diff:"medium",q:"Qual é a árvore símbolo nacional do Brasil?",opts:["Ipê-amarelo","Pau-brasil","Castanheira-do-Pará","Jatobá"],ans:0,exp:"O ipê-amarelo (Handroanthus albus). A castanheira é símbolo do Pará; o pau-brasil deu nome ao país."},
-  {id:16,type:"mc",cat:"Natureza",diff:"medium",q:"Qual é a árvore símbolo da Amazônia?",opts:["Seringueira","Castanheira-do-Pará","Açaizeiro","Mogno"],ans:1,exp:"A castanheira-do-Pará (Bertholletia excelsa) é símbolo da Amazônia. Pode viver 500+ anos e atingir 50 metros."},
-  {id:17,type:"mc",cat:"História",diff:"hard",q:"O que eram as sesmarias no Brasil colonial?",opts:["Tributos pagos ao rei","Lotes de terra cedidos pela Coroa para cultivo","Grupos de escravizados para lavoura","Missões jesuíticas"],ans:1,exp:"Sesmarias: lotes de terra concedidos pela Coroa portuguesa com obrigação de cultivá-los. Base da concentração fundiária que persiste até hoje."},
-  {id:18,type:"mc",cat:"Fronteiras",diff:"hard",q:"O que é o Marco do Jauru?",opts:["Uma cachoeira em MT","Um marco que delimita a fronteira Brasil–Bolívia","Uma fortaleza colonial no Pantanal","O ponto mais alto do Pantanal"],ans:1,exp:"O Marco do Jauru demarca a fronteira entre Brasil e Bolívia, estabelecida pelo Tratado de Petrópolis (1903)."},
-  {id:19,type:"mc",cat:"História",diff:"easy",q:"A Guerra dos Farrapos teve como epicentro qual estado?",opts:["Santa Catarina","Rio Grande do Sul","São Paulo","Paraná"],ans:1,exp:"A Revolução Farroupilha (1835–1845) teve epicentro no Rio Grande do Sul, onde proclamaram a República Rio-Grandense."},
-  {id:20,type:"mc",cat:"Indígenas",diff:"hard",q:"Qual povo indígena do Pantanal era chamado de 'homens canoa' e ainda existe hoje?",opts:["Guarani","Bororo","Guató","Xavante"],ans:2,exp:"Os Guató viviam nas águas do Pantanal. Um dos grupos mais antigos da região, com ~500 pessoas hoje."},
-  {id:21,type:"mc",cat:"Política",diff:"easy",q:"Em que ano o Brasil se tornou república?",opts:["1822","1888","1889","1891"],ans:2,exp:"República proclamada em 15 de novembro de 1889 por Deodoro da Fonseca. O Império caiu sem uma batalha."},
-  {id:22,type:"mc",cat:"Cultura",diff:"medium",q:"Qual instrumento comanda o jogo da capoeira?",opts:["Atabaque","Berimbau","Pandeiro","Agogô"],ans:1,exp:"O berimbau comanda a capoeira. Seus toques ditam o ritmo e a intensidade do jogo."},
-  {id:23,type:"mc",cat:"Território",diff:"medium",q:"Com quantos países o Brasil faz fronteira?",opts:["8","9","10","11"],ans:2,exp:"10 países: Argentina, Bolívia, Colômbia, Guiana, Guiana Francesa, Paraguai, Peru, Suriname, Uruguai e Venezuela."},
-  {id:24,type:"mc",cat:"Natureza",diff:"easy",q:"Qual bioma ocupa maior área no Brasil?",opts:["Cerrado","Amazônia","Caatinga","Mata Atlântica"],ans:1,exp:"A Amazônia ocupa ~49% do território — cerca de 4,2 milhões de km². Maior bioma tropical do planeta."},
-  {id:25,type:"mc",cat:"Economia",diff:"medium",q:"Qual produto foi responsável pelo primeiro ciclo econômico do Brasil colonial?",opts:["Ouro","Café","Cana-de-açúcar","Pau-brasil"],ans:3,exp:"O pau-brasil foi o primeiro produto explorado para exportação. A cana veio depois, no segundo ciclo."},
-  {id:26,type:"mc",cat:"História",diff:"medium",q:"Quem foi Zumbi dos Palmares?",opts:["Último líder do Quilombo dos Palmares, símbolo da resistência negra","Primeiro escravo liberto no Brasil","General da Guerra dos Farrapos","Índio aliado dos portugueses"],ans:0,exp:"Zumbi (1655–1695) liderou o maior quilombo das Américas. Morreu em 20 de novembro — Dia da Consciência Negra."},
-  {id:27,type:"mc",cat:"Fauna",diff:"easy",q:"Qual é o maior roedor do mundo, comum no Pantanal?",opts:["Queixada","Capivara","Paca","Cutia"],ans:1,exp:"A capivara (Hydrochoerus hydrochaeris), até 65 kg, é o maior roedor do planeta."},
-  {id:28,type:"mc",cat:"Território",diff:"medium",q:"Qual é o ponto mais alto do Brasil?",opts:["Pico da Neblina","Pico 31 de Março","Pedra da Mina","Monte Roraima"],ans:0,exp:"Pico da Neblina, Amazonas, 2.994 metros. Identificado como o mais alto apenas em 1962."},
-  {id:29,type:"mc",cat:"Política",diff:"easy",q:"Quem assinou a Lei Áurea?",opts:["Dom Pedro II","Princesa Isabel","Deodoro da Fonseca","Visconde do Rio Branco"],ans:1,exp:"A Princesa Isabel assinou a Lei Áurea em 13 de maio de 1888, durante a regência na ausência de Dom Pedro II."},
-  {id:30,type:"mc",cat:"Cultura",diff:"medium",q:"Quem escreveu 'Grande Sertão: Veredas'?",opts:["Machado de Assis","Guimarães Rosa","Jorge Amado","Clarice Lispector"],ans:1,exp:"João Guimarães Rosa escreveu 'Grande Sertão: Veredas' (1956), o maior romance brasileiro do século XX."},
-  {id:31,type:"mc",cat:"Arquitetura",diff:"medium",q:"Quem projetou Brasília?",opts:["Niemeyer e Lúcio Costa","Rino Levi e Paulo Mendes","Afonso Reidy e Jorge Moreira","Le Corbusier e Niemeyer"],ans:0,exp:"Oscar Niemeyer (edifícios) e Lúcio Costa (Plano Piloto). Brasília é Patrimônio da Humanidade."},
-  {id:32,type:"mc",cat:"Água",diff:"hard",q:"Qual porcentagem da água doce superficial do planeta o Brasil possui?",opts:["8%","12%","20%","33%"],ans:1,exp:"~12% de toda a água doce superficial do mundo, principalmente pela bacia amazônica."},
-  {id:33,type:"mc",cat:"Ciência",diff:"hard",q:"O que Carlos Chagas descobriu em 1909?",opts:["O vírus da dengue","A tripanossomíase americana (doença de Chagas)","A vacina contra febre amarela","O bacilo da tuberculose"],ans:1,exp:"Chagas descobriu o agente causador, o vetor (barbeiro) e a doença — uma das raras tríplices descobertas da ciência."},
-  {id:34,type:"mc",cat:"Natureza",diff:"hard",q:"O que são os 'rios voadores' da Amazônia?",opts:["Rios subterrâneos","Correntes de vapor d'água da floresta que causam chuvas no Centro-Oeste","Cachoeiras que parecem flutuar","O Rio Negro na cheia"],ans:1,exp:"Rios voadores: enormes fluxos de vapor evapotranspirado pela floresta. Carregam mais água que o próprio Amazonas."},
-  {id:35,type:"mc",cat:"Fronteiras",diff:"medium",q:"Qual país sul-americano NÃO faz fronteira com o Brasil?",opts:["Equador","Uruguai","Bolívia","Suriname"],ans:0,exp:"Equador e Chile são os dois países da América do Sul sem fronteira com o Brasil."},
-  {id:36,type:"mc",cat:"História",diff:"hard",q:"O que foi o Tratado de Tordesilhas (1494)?",opts:["Transferiu o Brasil para os espanhóis","Dividiu o mundo entre Portugal e Espanha por uma linha a 370 léguas de Cabo Verde","Paz entre Portugal e Holanda sobre o Brasil","Definiu os limites da Amazônia"],ans:1,exp:"Tordesilhas dividiu o 'Novo Mundo'. A linha acabou incluindo o Brasil no lado português."},
-  {id:37,type:"mc",cat:"Indígenas",diff:"medium",q:"Qual língua indígena deu mais palavras ao português do Brasil?",opts:["Guarani","Tupi","Nheengatu","Carib"],ans:1,exp:"O Tupi deu centenas de palavras: piranha, tucano, jacaré, capim, pipoca, abacaxi, mandioca e muitas outras."},
-  {id:38,type:"mc",cat:"Saúde",diff:"medium",q:"Qual médico erradicou a febre amarela do Rio de Janeiro no início do século XX?",opts:["Adolfo Lutz","Oswaldo Cruz","Carlos Chagas","Vital Brazil"],ans:1,exp:"Oswaldo Cruz usou brigadas de saúde e vacinação — gerando a Revolta da Vacina de 1904. Febre amarela erradicada."},
-  {id:39,type:"mc",cat:"Indígenas",diff:"hard",q:"O que foi a Cabanagem (1835–1840)?",opts:["Revolta popular na Amazônia que matou até 40% da população do Grão-Pará","Revolta de escravizados em Salvador","Expulsão dos jesuítas do Pará","Migração forçada de indígenas"],ans:0,exp:"A Cabanagem: caboclos, indígenas e mestiços tomaram Belém. Estimam-se 30.000–40.000 mortos em 5 anos."},
-  {id:40,type:"mc",cat:"Ciência",diff:"hard",q:"Qual neurocientista brasileira descobriu que o cérebro humano tem 86 bilhões de neurônios?",opts:["Mayana Zatz","Lygia da Veiga Pereira","Suzana Herculano-Houzel","Helena Nader"],ans:2,exp:"Suzana Herculano-Houzel derrubou o mito dos 100 bilhões de neurônios. O real é 86 bilhões."},
-  {id:41,type:"mc",cat:"Arte",diff:"medium",q:"Qual artista criou o 'Abaporu', que originou o Manifesto Antropofágico?",opts:["Tarsila do Amaral","Anita Malfatti","Di Cavalcanti","Lasar Segall"],ans:0,exp:"Tarsila do Amaral pintou o 'Abaporu' em 1928, inspirando Oswald de Andrade a criar o Manifesto Antropofágico."},
-  {id:42,type:"mc",cat:"Fauna",diff:"easy",q:"Qual é o pássaro nacional do Brasil?",opts:["Arara-azul","Tucano","Sabiá-laranjeira","Bem-te-vi"],ans:2,exp:"O sabiá-laranjeira (Turdus rufiventris) é o pássaro nacional desde 2002."},
-  {id:43,type:"mc",cat:"Território",diff:"easy",q:"Qual é o estado brasileiro com maior área?",opts:["Pará","Amazonas","Mato Grosso","Minas Gerais"],ans:1,exp:"O Amazonas tem 1,57 milhão de km² — maior que a Mongólia."},
-  {id:44,type:"mc",cat:"Política",diff:"medium",q:"Qual foi a primeira constituição republicana do Brasil?",opts:["Constituição de 1824","Constituição de 1891","Constituição de 1934","Constituição de 1988"],ans:1,exp:"Constituição de 1891: a primeira da República, inspirada no federalismo americano."},
-  {id:45,type:"mc",cat:"Esporte",diff:"easy",q:"Quantas vezes o Brasil ganhou a Copa do Mundo?",opts:["3","4","5","6"],ans:2,exp:"Pentacampeão: 1958, 1962, 1970, 1994 e 2002. Nenhum outro país ganhou 5 vezes."},
-  {id:46,type:"mc",cat:"Economia",diff:"medium",q:"O que foi a 'política do café-com-leite'?",opts:["Acordo entre Brasil e Argentina","Revezamento de presidentes entre SP e MG na Primeira República","Exportação conjunta de café e laticínios","Mistura de culturas agrícolas no Sul"],ans:1,exp:"SP (café) e MG (leite) se revezavam na presidência durante a Primeira República. Getúlio Vargas rompeu isso em 1930."},
-  {id:47,type:"mc",cat:"Água",diff:"easy",q:"Qual rio forma as maiores cataratas do mundo na fronteira Brasil-Argentina?",opts:["Rio Paraná","Rio Iguaçu","Rio Paraguai","Rio Uruguai"],ans:1,exp:"Cataratas do Iguaçu: 275 quedas, até 80 metros. As maiores do mundo em volume e impacto visual."},
-  {id:48,type:"mc",cat:"História",diff:"medium",q:"O que mais contribuiu para o fim do Império brasileiro?",opts:["Derrota na Guerra do Paraguai","Abolição da Escravatura, que retirou apoio ao imperador","A morte de Dom Pedro II","Uma invasão estrangeira"],ans:1,exp:"A Lei Áurea (1888) alienou a elite escravocrata. Sem apoio, Dom Pedro II foi deposto em 1889 sem resistência."},
-  {id:49,type:"mc",cat:"Fauna",diff:"hard",q:"Qual animal causa o maior número de mortes humanas no Brasil por ano?",opts:["Onça-pintada","Cascavel","Escorpião-amarelo","Abelha africanizada"],ans:2,exp:"O escorpião-amarelo (Tityus serrulatus) causa o maior número de mortes por peçonhento no Brasil, especialmente crianças."},
-  {id:50,type:"mc",cat:"Ciência",diff:"hard",q:"O que Santos Dumont reivindicava ter inventado?",opts:["O motor a vapor","O avião com decolagem autônoma sem catapulta","O dirigível a hidrogênio","O submarino"],ans:1,exp:"O 14-Bis voou em Paris em 1906 — decolagem autônoma. Para os brasileiros, o pai da aviação."},
-  {id:51,type:"tf",cat:"Natureza",diff:"easy",q:"O Rio Amazonas deságua no Oceano Atlântico.",ans:true,exp:"Correto. O Amazonas nasce nos Andes peruanos e percorre 6.400+ km até o Atlântico."},
-  {id:52,type:"tf",cat:"Cultura",diff:"easy",q:"A Bossa Nova surgiu no Rio de Janeiro na década de 1950.",ans:true,exp:"Sim. Nasceu na zona sul do Rio com Tom Jobim e João Gilberto como figuras centrais."},
-  {id:53,type:"tf",cat:"História",diff:"medium",q:"Dom João VI veio ao Brasil fugindo de Napoleão Bonaparte.",ans:true,exp:"Exato. Em 1808, a família real veio ao Rio fugindo da invasão napoleônica. Primeiro monarca europeu a pisar em solo americano."},
-  {id:54,type:"tf",cat:"Ciência",diff:"hard",q:"A Amazônia produz 20% do oxigênio da Terra.",ans:false,exp:"Mito comum. Florestas maduras consomem tanto quanto produzem. O saldo líquido é próximo de zero. O oxigênio líquido vem do fitoplâncton oceânico."},
-  {id:55,type:"tf",cat:"Economia",diff:"easy",q:"O Brasil é o maior exportador mundial de carne bovina.",ans:true,exp:"Correto. Lidera as exportações de carne bovina desde 2004, respondendo por mais de 20% do comércio global."},
-  {id:56,type:"tf",cat:"Indígenas",diff:"medium",q:"Existem mais de 300 povos indígenas no Brasil atualmente.",ans:true,exp:"Sim. Mais de 305 etnias reconhecidas, ~1,7 milhão de pessoas, mais de 170 línguas distintas."},
-  {id:57,type:"tf",cat:"Cultura",diff:"medium",q:"A capoeira foi criminalizada no Brasil durante parte do século XIX e início do XX.",ans:true,exp:"Sim. O Código Penal de 1890 criminalizava a capoeira. Só foi legalizada na Era Vargas, nos anos 1930."},
-  {id:58,type:"tf",cat:"Natureza",diff:"medium",q:"O Cerrado é o segundo maior bioma do Brasil.",ans:true,exp:"Correto. O Cerrado ocupa ~24% do Brasil — 2 milhões de km². Um dos 25 hotspots de biodiversidade do mundo."},
-  {id:59,type:"tf",cat:"Economia",diff:"easy",q:"O Brasil é o maior produtor mundial de café.",ans:true,exp:"Sim. 35–40% de todo o café do mundo, liderando a produção global há mais de 150 anos."},
-  {id:60,type:"tf",cat:"Política",diff:"easy",q:"A Constituição de 1988 é chamada de 'Constituição Cidadã'.",ans:true,exp:"Sim. O deputado Ulysses Guimarães a chamou assim por ser a mais democrática da história brasileira."},
-  {id:61,type:"tf",cat:"História",diff:"medium",q:"O Brasil enviou tropas à Europa na Segunda Guerra Mundial.",ans:true,exp:"Correto. A FEB (Força Expedicionária Brasileira) lutou na Itália em 1944–45. Único país latino-americano a enviar tropas terrestres à Europa."},
-  {id:62,type:"tf",cat:"Fauna",diff:"hard",q:"O boto-cor-de-rosa vive principalmente no Pantanal.",ans:false,exp:"Errado. O boto-cor-de-rosa é da bacia amazônica e do Orinoco — não do Pantanal. O golfinho pantaneiro é o boto-cinza (Sotalia fluviatilis)."},
-  {id:63,type:"tf",cat:"Natureza",diff:"easy",q:"A Mata Atlântica já foi destruída em mais de 85% de sua área original.",ans:true,exp:"Tragicamente correto. Restam menos de 12% da cobertura original. Mesmo assim, abriga 70% das espécies ameaçadas do Brasil."},
-  {id:64,type:"tf",cat:"Natureza",diff:"medium",q:"O Brasil tem a maior diversidade de espécies de aves do mundo.",ans:true,exp:"Correto. Mais de 1.900 espécies de aves registradas — mais que qualquer outro país."},
-  {id:65,type:"tf",cat:"Indígenas",diff:"medium",q:"A Terra Indígena Yanomami é a maior do Brasil.",ans:true,exp:"Sim. 9,6 milhões de hectares na fronteira AM/RR, abrigando ~30.000 Yanomami e Ye'kwana."},
-  {id:66,type:"tf",cat:"Natureza",diff:"medium",q:"O Brasil possui costas para dois oceanos.",ans:false,exp:"Errado. O Brasil tem apenas costa atlântica — 7.491 km. Não tem saída para o Pacífico."},
-  {id:67,type:"tf",cat:"Economia",diff:"medium",q:"O Brasil é o maior exportador mundial de açúcar.",ans:true,exp:"Correto. O Brasil responde por ~40% das exportações mundiais de açúcar."},
-  {id:68,type:"tf",cat:"Natureza",diff:"easy",q:"O Brasil tem a maior diversidade de peixes de água doce do mundo.",ans:true,exp:"Correto. Mais de 3.000 espécies de peixes de água doce — aproximadamente 15% de todas as espécies do planeta."},
-  {id:69,type:"tf",cat:"Cultura",diff:"easy",q:"O futebol foi inventado no Brasil.",ans:false,exp:"Errado. O futebol foi inventado na Inglaterra. Charles Miller trouxe ao Brasil em 1894."},
-  {id:70,type:"tf",cat:"Natureza",diff:"hard",q:"O jacaré-do-pantanal existe somente no Brasil.",ans:false,exp:"Errado. Ocorre também na Bolívia e no nordeste da Argentina. O Brasil tem 6 espécies de jacarés."},
-  {id:71,type:"tf",cat:"Política",diff:"medium",q:"O Brasil é uma república federativa presidencialista.",ans:true,exp:"Correto. Conforme a Constituição de 1988, formada por 26 estados, 1 Distrito Federal e 5.568 municípios."},
-  {id:72,type:"tf",cat:"Cultura",diff:"easy",q:"O cordel foi reconhecido como Patrimônio Cultural Imaterial do Brasil pelo IPHAN.",ans:true,exp:"Sim. A Literatura de Cordel foi inscrita pelo IPHAN em 2018."},
-  {id:73,type:"tf",cat:"Indígenas",diff:"hard",q:"A língua portuguesa sempre foi a única língua oficial no Brasil.",ans:false,exp:"Errado. Até o século XVIII, a língua geral (tupi) era mais falada que o português. Só foi obrigatório pelo Marquês de Pombal em 1757."},
-  {id:74,type:"mc",cat:"Natureza",diff:"medium",q:"O que é o Pantanal?",opts:["A maior floresta tropical do Brasil","A maior planície alagável do mundo","O maior deserto da América do Sul","O maior lago de água doce do mundo"],ans:1,exp:"O Pantanal é a maior planície alagável do planeta — ~150.000 km² no Brasil. Patrimônio Natural da Humanidade (UNESCO)."},
-  {id:75,type:"mc",cat:"Território",diff:"easy",q:"Qual é o menor estado do Brasil em área?",opts:["Alagoas","Sergipe","Rio de Janeiro","Espírito Santo"],ans:1,exp:"Sergipe, com 21.910 km², é o menor estado do Brasil."},
-  {id:76,type:"mc",cat:"Natureza",diff:"medium",q:"Qual bioma possui a maior diversidade de espécies vegetais (12.000+)?",opts:["Amazônia","Cerrado","Mata Atlântica","Pantanal"],ans:1,exp:"O Cerrado é a savana mais biodiversa do mundo, com mais de 12.000 espécies vegetais, muitas endêmicas."},
-  {id:77,type:"mc",cat:"Cultura",diff:"medium",q:"O que é o candomblé?",opts:["Dança folclórica do Nordeste","Religião afro-brasileira com raízes nos povos Yorubá, Fon e Banto","Festa popular de origem indígena","Ritual de cura de origem portuguesa"],ans:1,exp:"O candomblé preserva cultos aos orixás dos africanos escravizados. Centros mais tradicionais em Salvador (BA)."},
-  {id:78,type:"mc",cat:"Cultura",diff:"medium",q:"O que é a Literatura de Cordel?",opts:["Poesia épica do Sul em livros caros","Poesia popular nordestina impressa em folhetos simples, pendurados em cordas para venda","Gênero musical de origem indígena","Dança tradicional do Ceará"],ans:1,exp:"O cordel é poesia popular em folhetos baratos, vendida em feiras nordestinas. Raízes ibéricas, trata do cotidiano e da história."},
-  {id:79,type:"mc",cat:"Capitais",diff:"easy",q:"Em que ordem foram as capitais do Brasil?",opts:["Salvador → Rio de Janeiro → Brasília","Rio de Janeiro → Salvador → Brasília","Salvador → Brasília → Rio de Janeiro","Rio de Janeiro → Brasília → Salvador"],ans:0,exp:"Salvador (1549–1763) → Rio de Janeiro (1763–1960) → Brasília (1960–hoje)."},
-  {id:80,type:"mc",cat:"História",diff:"hard",q:"O que causou a Revolta da Chibata (1910)?",opts:["Castigos físicos legais aplicados a marinheiros negros na Marinha","Falta de pagamento a soldados","Má qualidade da comida nos navios","Presença de oficiais estrangeiros"],ans:0,exp:"João Cândido, o 'Almirante Negro', liderou a revolta contra as chicotadas — resquício da escravidão legal na Marinha, 22 anos após a abolição."},
-  {id:81,type:"mc",cat:"Economia",diff:"easy",q:"Qual é o maior porto da América Latina?",opts:["Porto de Santos (SP)","Porto de Paranaguá (PR)","Porto de Itajaí (SC)","Porto do Rio de Janeiro"],ans:0,exp:"O Porto de Santos movimenta mais de 130 milhões de toneladas por ano — o maior da América Latina."},
-  {id:82,type:"mc",cat:"Água",diff:"medium",q:"Qual é a maior usina hidrelétrica do Brasil em capacidade instalada?",opts:["Itaipu (PR)","Belo Monte (PA)","Tucuruí (PA)","Santo Antônio (RO)"],ans:1,exp:"Belo Monte, no Pará, é a maior do Brasil e a segunda do mundo em capacidade instalada (11.233 MW)."},
-  {id:83,type:"mc",cat:"Saúde",diff:"hard",q:"Qual serpente causa o maior número de acidentes ofídicos no Brasil?",opts:["Surucucu","Cascavel","Jararaca","Cobra-coral"],ans:2,exp:"A jararaca (Bothrops jararaca) é responsável por mais de 70% dos acidentes ofídicos no Brasil."},
-  {id:84,type:"mc",cat:"Ciência",diff:"medium",q:"O que é o INPA?",opts:["Instituto Nacional de Pesquisas da Amazônia","Instituto Nacional de Proteção Ambiental","Instituto Nacional de Pesquisa Agrícola","Instituto de Navegação Pantaneira"],ans:0,exp:"INPA, fundado em 1952, é o principal centro científico sobre a Amazônia, sediado em Manaus."},
-  {id:85,type:"mc",cat:"Identidade",diff:"easy",q:"Por que o Brasil é chamado de 'País da Diversidade'?",opts:["Porque tem 5 biomas","Porque mistura indígenas, africanos, europeus, asiáticos e árabes em cultura única","Porque tem o maior número de idiomas","Porque tem a maior diversidade de aves"],ans:1,exp:"305+ etnias indígenas, africanos, portugueses, italianos, alemães, japoneses, sírio-libaneses — cultura única e plural."},
-  {id:86,type:"mc",cat:"Natureza",diff:"hard",q:"Qual bioma perdeu mais de 85% de sua área e abriga 70% das espécies ameaçadas do Brasil?",opts:["Cerrado","Caatinga","Mata Atlântica","Pampa"],ans:2,exp:"A Mata Atlântica: menos de 12% da área original. Paradoxo trágico da biodiversidade — menos floresta, mais espécies ameaçadas."},
-  {id:87,type:"mc",cat:"Música",diff:"medium",q:"Qual ritmo do Recôncavo Baiano é Patrimônio da Humanidade (UNESCO)?",opts:["Forró","Samba","Samba de Roda","Axé"],ans:2,exp:"O Samba de Roda do Recôncavo Baiano foi inscrito na UNESCO em 2005. Ancestral do samba urbano carioca."},
-  {id:88,type:"mc",cat:"Religião",diff:"medium",q:"Qual é a maior festa religiosa do Brasil?",opts:["Círio de Nazaré (Belém-PA)","Carnaval do Rio","Festa Junina de Campina Grande","Romaria de Aparecida"],ans:0,exp:"O Círio de Nazaré, em Belém do Pará (outubro) — mais de 2 milhões de fiéis na procissão."},
-  {id:89,type:"mc",cat:"Indígenas",diff:"hard",q:"Qual povo indígena do Sul tem cosmologia dual Kamé e Kairu?",opts:["Guarani","Kaingang","Xokleng","Bororo"],ans:1,exp:"Os Kaingang habitam o Sul do Brasil. Sua cosmologia dual (Kamé e Kairu) organiza toda a vida social e ritual."},
-  {id:90,type:"mc",cat:"Cultura",diff:"medium",q:"O que é o Bumba-meu-boi?",opts:["Dança folclórica do Sul","Auto folclórico nordestino sobre morte e ressurreição de um boi","Festa indígena da Amazônia","Ritual do candomblé"],ans:1,exp:"O Bumba-meu-boi, especialmente no Maranhão, mistura elementos indígenas, africanos e europeus numa narrativa sobre um boi especial."},
+  {id:13,type:"tf",cat:"Ciência",diff:"hard",q:"A Amazônia produz 20% do oxigênio da Terra.",ans:false,exp:"Mito. Florestas maduras consomem tanto quanto produzem. Saldo líquido próximo de zero. O oxigênio líquido vem do fitoplâncton oceânico."},
+  {id:14,type:"tf",cat:"Fauna",diff:"hard",q:"O boto-cor-de-rosa vive principalmente no Pantanal.",ans:false,exp:"Errado. O boto-cor-de-rosa é da bacia amazônica e do Orinoco. O golfinho pantaneiro é o boto-cinza (Sotalia fluviatilis)."},
+  {id:15,type:"tf",cat:"Natureza",diff:"easy",q:"A Mata Atlântica já foi destruída em mais de 85% de sua área original.",ans:true,exp:"Tragicamente correto. Restam menos de 12% da cobertura original. Mesmo assim, abriga 70% das espécies ameaçadas do Brasil."},
+  {id:16,type:"tf",cat:"Natureza",diff:"medium",q:"O Cerrado é o segundo maior bioma do Brasil.",ans:true,exp:"Correto. O Cerrado ocupa ~24% do Brasil — 2 milhões de km². Um dos 25 hotspots de biodiversidade do mundo."},
+  {id:17,type:"tf",cat:"Economia",diff:"easy",q:"O Brasil é o maior produtor mundial de café.",ans:true,exp:"Sim. 35–40% de todo o café do mundo, liderando a produção global há mais de 150 anos."},
+  {id:18,type:"tf",cat:"Política",diff:"easy",q:"A Constituição de 1988 é chamada de 'Constituição Cidadã'.",ans:true,exp:"Sim. O deputado Ulysses Guimarães a chamou assim por ser a mais democrática da história brasileira."},
+  {id:19,type:"tf",cat:"História",diff:"medium",q:"O Brasil enviou tropas à Europa na Segunda Guerra Mundial.",ans:true,exp:"Correto. A FEB lutou na Itália em 1944–45. Único país latino-americano a enviar tropas terrestres à Europa."},
+  {id:20,type:"tf",cat:"Cultura",diff:"medium",q:"A capoeira foi criminalizada no Brasil em parte do século XIX e início do XX.",ans:true,exp:"Sim. O Código Penal de 1890 criminalizava a capoeira. Só foi legalizada na Era Vargas, anos 1930."},
+  {id:21,type:"tf",cat:"Natureza",diff:"medium",q:"O Brasil tem a maior diversidade de espécies de aves do mundo.",ans:true,exp:"Correto. Mais de 1.900 espécies de aves registradas — mais que qualquer outro país."},
+  {id:22,type:"tf",cat:"Economia",diff:"medium",q:"O Brasil é o maior exportador mundial de açúcar.",ans:true,exp:"Correto. Responde por ~40% das exportações mundiais de açúcar."},
+  {id:23,type:"tf",cat:"Natureza",diff:"easy",q:"O Brasil tem a maior diversidade de peixes de água doce do mundo.",ans:true,exp:"Correto. Mais de 3.000 espécies de peixes de água doce — ~15% de todas as espécies do planeta."},
+  {id:24,type:"tf",cat:"Cultura",diff:"easy",q:"O futebol foi inventado no Brasil.",ans:false,exp:"Errado. O futebol foi inventado na Inglaterra. Charles Miller trouxe ao Brasil em 1894."},
+  {id:25,type:"tf",cat:"Natureza",diff:"hard",q:"O jacaré-do-pantanal existe somente no Brasil.",ans:false,exp:"Errado. Ocorre também na Bolívia e no nordeste da Argentina."},
+  {id:26,type:"tf",cat:"Indígenas",diff:"medium",q:"Existem mais de 300 povos indígenas no Brasil atualmente.",ans:true,exp:"Sim. Mais de 305 etnias reconhecidas, ~1,7 milhão de pessoas, mais de 170 línguas distintas."},
+  {id:27,type:"tf",cat:"Natureza",diff:"medium",q:"O Brasil possui costas para dois oceanos.",ans:false,exp:"Errado. O Brasil tem apenas costa atlântica — 7.491 km. Não tem saída para o Pacífico."},
+  {id:28,type:"tf",cat:"Indígenas",diff:"medium",q:"A Terra Indígena Yanomami é a maior do Brasil.",ans:true,exp:"Sim. 9,6 milhões de hectares na fronteira AM/RR, abrigando ~30.000 Yanomami e Ye'kwana."},
+  {id:29,type:"tf",cat:"Indígenas",diff:"hard",q:"A língua portuguesa sempre foi a única língua oficial no Brasil.",ans:false,exp:"Errado. Até o século XVIII, a língua geral (tupi) era mais falada que o português. Só virou obrigatório pelo Marquês de Pombal em 1757."},
+  {id:30,type:"tf",cat:"Economia",diff:"medium",q:"O Brasil é o maior exportador mundial de suco de laranja.",ans:true,exp:"Correto. Produz e exporta mais de 80% do suco de laranja do mundo, concentrado no interior de São Paulo."},
+  {id:31,type:"mc",cat:"Origem",diff:"easy",q:"Qual foi a primeira capital estabelecida pelos portugueses no Brasil?",opts:["Salvador","Porto Seguro","São Paulo","Rio de Janeiro"],ans:0,exp:"Salvador (Bahia), fundada em 1549 por Tomé de Sousa. Porto Seguro foi o local do 'achamento', mas nunca foi capital."},
+  {id:32,type:"mc",cat:"Política",diff:"easy",q:"Quem foi o primeiro presidente do Brasil?",opts:["Prudente de Morais","Floriano Peixoto","Deodoro da Fonseca","Dom Pedro II"],ans:2,exp:"Marechal Deodoro da Fonseca proclamou a República em 15 de novembro de 1889 e tornou-se o primeiro presidente."},
+  {id:33,type:"mc",cat:"Natureza",diff:"medium",q:"Qual é a árvore símbolo nacional do Brasil?",opts:["Ipê-amarelo","Pau-brasil","Castanheira-do-Pará","Jatobá"],ans:0,exp:"O ipê-amarelo (Handroanthus albus). A castanheira é símbolo do Pará; o pau-brasil deu nome ao país."},
+  {id:34,type:"mc",cat:"Natureza",diff:"medium",q:"Qual é a árvore símbolo da Amazônia?",opts:["Seringueira","Castanheira-do-Pará","Açaizeiro","Mogno"],ans:1,exp:"A castanheira-do-Pará (Bertholletia excelsa). Pode viver 500+ anos e atingir 50 metros de altura."},
+  {id:35,type:"mc",cat:"História",diff:"hard",q:"O que eram as sesmarias no Brasil colonial?",opts:["Tributos pagos ao rei","Lotes de terra cedidos pela Coroa para cultivo","Grupos de escravizados para lavoura","Missões jesuíticas"],ans:1,exp:"Sesmarias: lotes de terra concedidos pela Coroa com obrigação de cultivá-los. Base da concentração fundiária que persiste até hoje."},
+  {id:36,type:"mc",cat:"Fronteiras",diff:"hard",q:"O que é o Marco do Jauru?",opts:["Uma cachoeira em MT","Um marco que delimita a fronteira Brasil–Bolívia","Uma fortaleza colonial no Pantanal","O ponto mais alto do Pantanal"],ans:1,exp:"O Marco do Jauru demarca a fronteira entre Brasil e Bolívia, estabelecida pelo Tratado de Petrópolis (1903)."},
+  {id:37,type:"mc",cat:"História",diff:"easy",q:"A Guerra dos Farrapos teve como epicentro qual estado?",opts:["Santa Catarina","Rio Grande do Sul","São Paulo","Paraná"],ans:1,exp:"A Revolução Farroupilha (1835–1845) teve epicentro no RS, onde proclamaram a República Rio-Grandense."},
+  {id:38,type:"mc",cat:"Indígenas",diff:"hard",q:"Qual povo indígena do Pantanal era chamado de 'homens canoa' e ainda existe hoje?",opts:["Guarani","Bororo","Guató","Xavante"],ans:2,exp:"Os Guató viviam nas águas do Pantanal. Um dos grupos mais antigos da região, com ~500 pessoas atualmente."},
+  {id:39,type:"mc",cat:"Política",diff:"easy",q:"Em que ano o Brasil se tornou república?",opts:["1822","1888","1889","1891"],ans:2,exp:"República proclamada em 15 de novembro de 1889 por Deodoro da Fonseca. O Império caiu sem uma batalha."},
+  {id:40,type:"mc",cat:"Cultura",diff:"medium",q:"Qual instrumento comanda o jogo da capoeira?",opts:["Atabaque","Berimbau","Pandeiro","Agogô"],ans:1,exp:"O berimbau comanda a capoeira. Seus toques ditam o ritmo e a intensidade do jogo."},
+  {id:41,type:"mc",cat:"Território",diff:"medium",q:"Com quantos países o Brasil faz fronteira?",opts:["8","9","10","11"],ans:2,exp:"10 países: Argentina, Bolívia, Colômbia, Guiana, Guiana Francesa, Paraguai, Peru, Suriname, Uruguai e Venezuela."},
+  {id:42,type:"mc",cat:"Natureza",diff:"easy",q:"Qual bioma ocupa maior área no Brasil?",opts:["Cerrado","Amazônia","Caatinga","Mata Atlântica"],ans:1,exp:"A Amazônia ocupa ~49% do território — ~4,2 milhões de km². Maior bioma tropical do planeta."},
+  {id:43,type:"mc",cat:"Economia",diff:"medium",q:"Qual produto foi responsável pelo primeiro ciclo econômico do Brasil colonial?",opts:["Ouro","Café","Cana-de-açúcar","Pau-brasil"],ans:3,exp:"O pau-brasil foi o primeiro produto explorado para exportação do pigmento vermelho. A cana veio depois."},
+  {id:44,type:"mc",cat:"História",diff:"medium",q:"Quem foi Zumbi dos Palmares?",opts:["Último líder do Quilombo dos Palmares, símbolo da resistência negra","Primeiro escravo liberto no Brasil","General da Guerra dos Farrapos","Índio aliado dos portugueses"],ans:0,exp:"Zumbi (1655–1695) liderou o maior quilombo das Américas. Morreu em 20 de novembro — Dia da Consciência Negra."},
+  {id:45,type:"mc",cat:"Fauna",diff:"easy",q:"Qual é o maior roedor do mundo, comum no Pantanal?",opts:["Queixada","Capivara","Paca","Cutia"],ans:1,exp:"A capivara (Hydrochoerus hydrochaeris), até 65 kg, é o maior roedor do planeta."},
+  {id:46,type:"mc",cat:"Território",diff:"medium",q:"Qual é o ponto mais alto do Brasil?",opts:["Pico da Neblina","Pico 31 de Março","Pedra da Mina","Monte Roraima"],ans:0,exp:"Pico da Neblina, Amazonas, 2.994 metros. Identificado como o mais alto apenas em 1962."},
+  {id:47,type:"mc",cat:"Política",diff:"easy",q:"Quem assinou a Lei Áurea?",opts:["Dom Pedro II","Princesa Isabel","Deodoro da Fonseca","Visconde do Rio Branco"],ans:1,exp:"A Princesa Isabel assinou a Lei Áurea em 13 de maio de 1888, durante a regência na ausência de Dom Pedro II."},
+  {id:48,type:"mc",cat:"Cultura",diff:"medium",q:"Quem escreveu 'Grande Sertão: Veredas'?",opts:["Machado de Assis","Guimarães Rosa","Jorge Amado","Clarice Lispector"],ans:1,exp:"João Guimarães Rosa escreveu 'Grande Sertão: Veredas' (1956), o maior romance brasileiro do século XX."},
+  {id:49,type:"mc",cat:"Arquitetura",diff:"medium",q:"Quem projetou Brasília?",opts:["Niemeyer e Lúcio Costa","Rino Levi e Paulo Mendes","Afonso Reidy e Jorge Moreira","Le Corbusier e Niemeyer"],ans:0,exp:"Oscar Niemeyer (edifícios) e Lúcio Costa (Plano Piloto). Brasília é Patrimônio da Humanidade."},
+  {id:50,type:"mc",cat:"Água",diff:"hard",q:"Qual porcentagem da água doce superficial do planeta o Brasil possui?",opts:["8%","12%","20%","33%"],ans:1,exp:"~12% de toda a água doce superficial do mundo, principalmente pela bacia amazônica."},
+  {id:51,type:"mc",cat:"Ciência",diff:"hard",q:"O que Carlos Chagas descobriu em 1909?",opts:["O vírus da dengue","A tripanossomíase americana (doença de Chagas)","A vacina contra febre amarela","O bacilo da tuberculose"],ans:1,exp:"Chagas descobriu o agente causador, o vetor (barbeiro) e a doença — uma das raras tríplices descobertas da ciência."},
+  {id:52,type:"mc",cat:"Religião",diff:"medium",q:"Qual é a maior festa religiosa do Brasil?",opts:["Círio de Nazaré (Belém-PA)","Carnaval do Rio","Festa Junina de Campina Grande","Romaria de Aparecida"],ans:0,exp:"O Círio de Nazaré, em Belém (outubro) — mais de 2 milhões de fiéis na procissão."},
+  {id:53,type:"mc",cat:"Natureza",diff:"hard",q:"O que são os 'rios voadores' da Amazônia?",opts:["Rios subterrâneos","Correntes de vapor d'água da floresta que causam chuvas no Centro-Oeste","Cachoeiras que parecem flutuar","O Rio Negro na cheia"],ans:1,exp:"Rios voadores: enormes fluxos de vapor evapotranspirado. Carregam mais água que o próprio Amazonas e causam chuvas distantes."},
+  {id:54,type:"mc",cat:"Fronteiras",diff:"medium",q:"Qual país sul-americano NÃO faz fronteira com o Brasil?",opts:["Equador","Uruguai","Bolívia","Suriname"],ans:0,exp:"Equador e Chile são os dois países da América do Sul sem fronteira com o Brasil."},
+  {id:55,type:"mc",cat:"História",diff:"hard",q:"O que foi o Tratado de Tordesilhas (1494)?",opts:["Transferiu o Brasil para os espanhóis","Dividiu o mundo entre Portugal e Espanha por linha a 370 léguas de Cabo Verde","Paz entre Portugal e Holanda","Definiu os limites da Amazônia"],ans:1,exp:"Tordesilhas dividiu o 'Novo Mundo'. A linha acabou incluindo o Brasil no lado português."},
+  {id:56,type:"mc",cat:"Indígenas",diff:"medium",q:"Qual língua indígena deu mais palavras ao português do Brasil?",opts:["Guarani","Tupi","Nheengatu","Carib"],ans:1,exp:"O Tupi deu centenas de palavras: piranha, tucano, jacaré, capim, pipoca, abacaxi, mandioca e muitas outras."},
+  {id:57,type:"mc",cat:"História",diff:"medium",q:"O que foi a Inconfidência Mineira (1789)?",opts:["Revolta de escravizados","Tentativa de independência liderada por intelectuais mineiros","Guerra entre Portugal e Holanda","Abolição do trabalho escravo em Minas"],ans:1,exp:"Movimento separatista de intelectuais e militares mineiros. Tiradentes foi o único executado."},
+  {id:58,type:"mc",cat:"Fauna",diff:"easy",q:"Qual é o pássaro nacional do Brasil?",opts:["Arara-azul","Tucano","Sabiá-laranjeira","Bem-te-vi"],ans:2,exp:"O sabiá-laranjeira (Turdus rufiventris) é o pássaro nacional desde 2002."},
+  {id:59,type:"mc",cat:"Território",diff:"easy",q:"Qual é o estado brasileiro com maior área?",opts:["Pará","Amazonas","Mato Grosso","Minas Gerais"],ans:1,exp:"O Amazonas tem 1,57 milhão de km² — maior que a Mongólia."},
+  {id:60,type:"mc",cat:"Política",diff:"medium",q:"Qual foi a primeira constituição republicana do Brasil?",opts:["Constituição de 1824","Constituição de 1891","Constituição de 1934","Constituição de 1988"],ans:1,exp:"Constituição de 1891: a primeira da República, inspirada no federalismo americano."},
+  {id:61,type:"mc",cat:"Esporte",diff:"easy",q:"Quantas vezes o Brasil ganhou a Copa do Mundo?",opts:["3","4","5","6"],ans:2,exp:"Pentacampeão: 1958, 1962, 1970, 1994 e 2002. Nenhum outro país ganhou 5 vezes."},
+  {id:62,type:"mc",cat:"Economia",diff:"medium",q:"O que foi a 'política do café-com-leite'?",opts:["Acordo entre Brasil e Argentina","Revezamento de presidentes entre SP e MG na Primeira República","Exportação conjunta de café e laticínios","Mistura de culturas no Sul"],ans:1,exp:"SP (café) e MG (leite) se revezavam na presidência. Getúlio Vargas rompeu isso em 1930."},
+  {id:63,type:"mc",cat:"Água",diff:"easy",q:"Qual rio forma as maiores cataratas do mundo na fronteira Brasil-Argentina?",opts:["Rio Paraná","Rio Iguaçu","Rio Paraguai","Rio Uruguai"],ans:1,exp:"Cataratas do Iguaçu: 275 quedas, até 80 metros. As maiores do mundo em volume e impacto visual."},
+  {id:64,type:"mc",cat:"História",diff:"medium",q:"O que mais contribuiu para o fim do Império brasileiro?",opts:["Derrota na Guerra do Paraguai","Abolição da Escravatura, que retirou apoio ao imperador","A morte de Dom Pedro II","Uma invasão estrangeira"],ans:1,exp:"A Lei Áurea (1888) alienou a elite escravocrata. Sem apoio, Dom Pedro II foi deposto em 1889 sem resistência."},
+  {id:65,type:"mc",cat:"Fauna",diff:"hard",q:"Qual animal causa o maior número de mortes humanas no Brasil por ano?",opts:["Onça-pintada","Cascavel","Escorpião-amarelo","Abelha africanizada"],ans:2,exp:"O escorpião-amarelo (Tityus serrulatus) causa o maior número de mortes por peçonhento no Brasil, especialmente crianças."},
+  {id:66,type:"mc",cat:"Arte",diff:"medium",q:"Qual artista criou o 'Abaporu', que originou o Manifesto Antropofágico?",opts:["Tarsila do Amaral","Anita Malfatti","Di Cavalcanti","Lasar Segall"],ans:0,exp:"Tarsila do Amaral pintou o 'Abaporu' em 1928, inspirando Oswald de Andrade a criar o Manifesto Antropofágico."},
+  {id:67,type:"mc",cat:"Cultura",diff:"medium",q:"O que é o Bumba-meu-boi?",opts:["Dança folclórica do Sul","Auto folclórico nordestino sobre morte e ressurreição de um boi","Festa indígena da Amazônia","Ritual do candomblé"],ans:1,exp:"O Bumba-meu-boi, especialmente no Maranhão, mistura elementos indígenas, africanos e europeus."},
+  {id:68,type:"mc",cat:"Capitais",diff:"easy",q:"Em que ordem foram as capitais do Brasil?",opts:["Salvador → Rio de Janeiro → Brasília","Rio de Janeiro → Salvador → Brasília","Salvador → Brasília → Rio de Janeiro","Rio de Janeiro → Brasília → Salvador"],ans:0,exp:"Salvador (1549–1763) → Rio de Janeiro (1763–1960) → Brasília (1960–hoje)."},
+  {id:69,type:"mc",cat:"História",diff:"hard",q:"O que causou a Revolta da Chibata (1910)?",opts:["Castigos físicos legais aplicados a marinheiros negros na Marinha","Falta de pagamento a soldados","Má qualidade da comida nos navios","Presença de oficiais estrangeiros"],ans:0,exp:"João Cândido, o 'Almirante Negro', liderou a revolta contra as chicotadas — resquício legal da escravidão na Marinha, 22 anos após a abolição."},
+  {id:70,type:"mc",cat:"Economia",diff:"easy",q:"Qual é o maior porto da América Latina?",opts:["Porto de Santos (SP)","Porto de Paranaguá (PR)","Porto de Itajaí (SC)","Porto do Rio de Janeiro"],ans:0,exp:"O Porto de Santos movimenta mais de 130 milhões de toneladas por ano — o maior da América Latina."},
+  {id:71,type:"mc",cat:"Água",diff:"medium",q:"Qual é a maior usina hidrelétrica do Brasil em capacidade instalada?",opts:["Itaipu (PR)","Belo Monte (PA)","Tucuruí (PA)","Santo Antônio (RO)"],ans:1,exp:"Belo Monte, no Pará, é a maior do Brasil e a segunda do mundo em capacidade instalada (11.233 MW)."},
+  {id:72,type:"mc",cat:"Saúde",diff:"hard",q:"Qual serpente causa o maior número de acidentes ofídicos no Brasil?",opts:["Surucucu","Cascavel","Jararaca","Cobra-coral"],ans:2,exp:"A jararaca (Bothrops jararaca) é responsável por mais de 70% dos acidentes ofídicos no Brasil."},
+  {id:73,type:"mc",cat:"Ciência",diff:"medium",q:"O que é o INPA?",opts:["Instituto Nacional de Pesquisas da Amazônia","Instituto Nacional de Proteção Ambiental","Instituto Nacional de Pesquisa Agrícola","Instituto de Navegação Pantaneira"],ans:0,exp:"INPA, fundado em 1952, é o principal centro científico sobre a Amazônia, sediado em Manaus."},
+  {id:74,type:"mc",cat:"Identidade",diff:"easy",q:"Por que o Brasil é chamado de 'País da Diversidade'?",opts:["Porque tem 5 biomas","Porque mistura indígenas, africanos, europeus, asiáticos e árabes em cultura única","Porque tem o maior número de idiomas","Porque tem a maior diversidade de aves"],ans:1,exp:"305+ etnias indígenas, africanos, portugueses, italianos, alemães, japoneses, sírio-libaneses — cultura única e plural."},
+  {id:75,type:"mc",cat:"Natureza",diff:"hard",q:"Qual bioma perdeu mais de 85% de sua área e abriga 70% das espécies ameaçadas do Brasil?",opts:["Cerrado","Caatinga","Mata Atlântica","Pampa"],ans:2,exp:"A Mata Atlântica: menos de 12% da área original. Paradoxo trágico — menos floresta, mais espécies ameaçadas."},
+  {id:76,type:"mc",cat:"Música",diff:"medium",q:"Qual ritmo do Recôncavo Baiano é Patrimônio da Humanidade (UNESCO)?",opts:["Forró","Samba","Samba de Roda","Axé"],ans:2,exp:"O Samba de Roda do Recôncavo Baiano foi inscrito na UNESCO em 2005. Ancestral do samba urbano carioca."},
+  {id:77,type:"mc",cat:"Indígenas",diff:"hard",q:"Qual povo indígena do Sul tem cosmologia dual Kamé e Kairu?",opts:["Guarani","Kaingang","Xokleng","Bororo"],ans:1,exp:"Os Kaingang habitam o Sul do Brasil. Sua cosmologia dual (Kamé e Kairu) organiza toda a vida social e ritual."},
+  {id:78,type:"mc",cat:"Ciência",diff:"hard",q:"Qual neurocientista brasileira descobriu que o cérebro humano tem 86 bilhões de neurônios?",opts:["Mayana Zatz","Lygia da Veiga Pereira","Suzana Herculano-Houzel","Helena Nader"],ans:2,exp:"Suzana Herculano-Houzel derrubou o mito dos 100 bilhões de neurônios. O real é 86 bilhões."},
+  {id:79,type:"mc",cat:"Arte",diff:"medium",q:"Quem escreveu 'Os Sertões', relato da Guerra de Canudos?",opts:["Machado de Assis","Euclides da Cunha","José de Alencar","Graciliano Ramos"],ans:1,exp:"Euclides da Cunha (1866–1909) escreveu 'Os Sertões' (1902), clássico sobre a guerra de Canudos (1896–1897)."},
+  {id:80,type:"mc",cat:"História",diff:"hard",q:"O que foi a Cabanagem (1835–1840)?",opts:["Revolta popular na Amazônia que matou até 40% da população do Grão-Pará","Revolta de escravizados em Salvador","Expulsão dos jesuítas do Pará","Migração forçada de indígenas"],ans:0,exp:"A Cabanagem: caboclos, indígenas e mestiços tomaram Belém. Estima-se 30.000–40.000 mortos em 5 anos de repressão brutal."},
+  {id:81,type:"mc",cat:"Saúde",diff:"medium",q:"Qual médico erradicou a febre amarela do Rio de Janeiro no início do século XX?",opts:["Adolfo Lutz","Oswaldo Cruz","Carlos Chagas","Vital Brazil"],ans:1,exp:"Oswaldo Cruz usou brigadas de saúde e vacinação forçada — gerando a Revolta da Vacina de 1904."},
+  {id:82,type:"mc",cat:"Natureza",diff:"medium",q:"O que é o Pantanal?",opts:["A maior floresta tropical do Brasil","A maior planície alagável do mundo","O maior deserto da América do Sul","O maior lago de água doce do mundo"],ans:1,exp:"O Pantanal é a maior planície alagável do planeta — ~150.000 km². Patrimônio Natural da Humanidade (UNESCO)."},
+  {id:83,type:"mc",cat:"Território",diff:"easy",q:"Qual é o menor estado do Brasil em área?",opts:["Alagoas","Sergipe","Rio de Janeiro","Espírito Santo"],ans:1,exp:"Sergipe, com 21.910 km², é o menor estado do Brasil."},
+  {id:84,type:"mc",cat:"Natureza",diff:"medium",q:"Qual bioma possui a maior diversidade de espécies vegetais (12.000+)?",opts:["Amazônia","Cerrado","Mata Atlântica","Pantanal"],ans:1,exp:"O Cerrado é a savana mais biodiversa do mundo, com mais de 12.000 espécies vegetais, muitas endêmicas."},
+  {id:85,type:"mc",cat:"Cultura",diff:"medium",q:"O que é o candomblé?",opts:["Dança folclórica do Nordeste","Religião afro-brasileira com raízes nos povos Yorubá, Fon e Banto","Festa popular de origem indígena","Ritual de cura de origem portuguesa"],ans:1,exp:"O candomblé preserva cultos aos orixás dos africanos escravizados. Centros mais tradicionais em Salvador (BA)."},
+  {id:86,type:"mc",cat:"Cultura",diff:"medium",q:"O que é a Literatura de Cordel?",opts:["Poesia épica do Sul em livros caros","Poesia popular nordestina impressa em folhetos simples pendurados em cordas","Gênero musical de origem indígena","Dança tradicional do Ceará"],ans:1,exp:"O cordel é poesia popular em folhetos baratos, vendida em feiras nordestinas. Raízes ibéricas, trata do cotidiano e da história."},
+  {id:87,type:"mc",cat:"Política",diff:"medium",q:"Quando Dom Pedro I declarou a Independência do Brasil?",opts:["7 de setembro de 1822, Rio Ipiranga (SP)","15 de novembro de 1889, Rio de Janeiro","22 de abril de 1500, Porto Seguro","1 de março de 1823, Salvador"],ans:0,exp:"7 de setembro de 1822, às margens do Rio Ipiranga, em São Paulo."},
+  {id:88,type:"mc",cat:"Natureza",diff:"medium",q:"Qual bioma ocupa o Sul do Brasil com características de estepe?",opts:["Cerrado","Caatinga","Pampa","Mata de Araucárias"],ans:2,exp:"O Pampa (Campos Sulinos) ocupa o RS. É o bioma mais ameaçado do Brasil — mais de 54% já convertido."},
+  {id:89,type:"mc",cat:"Ciência",diff:"hard",q:"Onde estão as maiores reservas do pré-sal brasileiro?",opts:["Bacia de Campos (RJ)","Bacia de Santos (SP)","Bacia do Solimões (AM)","Espírito Santo"],ans:1,exp:"A Bacia de Santos concentra as maiores reservas do pré-sal, descobertas em 2006 pela Petrobras, a 5–7 km de profundidade."},
+  {id:90,type:"mc",cat:"Economia",diff:"medium",q:"Qual produto financiou a industrialização de São Paulo no século XIX?",opts:["Borracha","Ouro","Café","Algodão"],ans:2,exp:"O ciclo do café (1830–1930) transformou SP. O Brasil chegou a produzir 80% do café mundial."},
   {id:91,type:"mc",cat:"História",diff:"medium",q:"O que foi a Inconfidência Mineira (1789)?",opts:["Revolta de escravizados","Tentativa de independência liderada por intelectuais mineiros","Guerra entre Portugal e Holanda","Abolição do trabalho escravo"],ans:1,exp:"Movimento separatista de intelectuais e militares mineiros. Tiradentes foi o único executado."},
   {id:92,type:"mc",cat:"Fauna",diff:"medium",q:"Qual a maior lagoa do Brasil?",opts:["Lagoa dos Patos (RS)","Lagoa Mirim (RS)","Lago de Itaipu (PR)","Lagoa da Pampulha (MG)"],ans:0,exp:"Lagoa dos Patos, RS, com 10.360 km² — a maior lagoa do Brasil e segunda da América do Sul."},
   {id:93,type:"mc",cat:"História",diff:"hard",q:"Qual foi a batalha mais importante dos pracinhas na Itália (WWII)?",opts:["Monte Cassino","Monte Castello","El Alamein","Anzio"],ans:1,exp:"Batalha de Monte Castello (fevereiro de 1945): o maior feito militar da FEB na Itália."},
-  {id:94,type:"mc",cat:"Economia",diff:"medium",q:"Qual produto financiou a industrialização de São Paulo no século XIX?",opts:["Borracha","Ouro","Café","Algodão"],ans:2,exp:"O ciclo do café (1830–1930) transformou SP. O Brasil chegou a produzir 80% do café mundial."},
-  {id:95,type:"mc",cat:"Política",diff:"hard",q:"Quando Dom Pedro I declarou a Independência do Brasil?",opts:["7 de setembro de 1822, Rio Ipiranga (SP)","15 de novembro de 1889, Rio de Janeiro","22 de abril de 1500, Porto Seguro","1 de março de 1823, Salvador"],ans:0,exp:"7 de setembro de 1822, às margens do Rio Ipiranga, em São Paulo."},
-  {id:96,type:"mc",cat:"História",diff:"hard",q:"O que foram as sesmarias e que legado deixaram?",opts:["Sistema tributário colonial que originou a dívida pública","Lotes de terra cedidos pela Coroa que originaram a concentração fundiária","Missões jesuíticas que originaram as cidades do interior","Sistema de aldeamentos que originou os territórios indígenas"],ans:1,exp:"Sesmarias: lotes de terra da Coroa para colonizadores cultivarem. Base direta da concentração de terras que persiste até hoje no Brasil."},
-  {id:97,type:"mc",cat:"Ciência",diff:"hard",q:"Onde estão as maiores reservas do pré-sal brasileiro?",opts:["Bacia de Campos (RJ)","Bacia de Santos (SP)","Bacia do Solimões (AM)","Espírito Santo"],ans:1,exp:"A Bacia de Santos concentra as maiores reservas do pré-sal, descobertas em 2006 pela Petrobras, a 5–7 km de profundidade."},
-  {id:98,type:"mc",cat:"Arte",diff:"hard",q:"Quem escreveu 'Os Sertões', relato da Guerra de Canudos?",opts:["Machado de Assis","Euclides da Cunha","José de Alencar","Graciliano Ramos"],ans:1,exp:"Euclides da Cunha (1866–1909) escreveu 'Os Sertões' (1902), um dos maiores clássicos da literatura brasileira, sobre a guerra de Canudos (1896–1897)."},
-  {id:99,type:"mc",cat:"Natureza",diff:"medium",q:"Qual bioma ocupa o Sul do Brasil e tem características de estepe?",opts:["Cerrado","Caatinga","Pampa","Mata de Araucárias"],ans:2,exp:"O Pampa (ou Campos Sulinos) ocupa o RS e tem características de estepe subtropical. É o bioma mais ameaçado do Brasil — mais de 54% já convertido."},
-  {id:100,type:"mc",cat:"Cultura",diff:"hard",q:"Em que cidade nasceu o primeiro carnaval do Brasil com desfile de escolas de samba?",opts:["Salvador","São Paulo","Rio de Janeiro","Recife"],ans:2,exp:"O Rio de Janeiro foi onde surgiram as primeiras escolas de samba, nos anos 1920. O Estácio de Sá é reconhecido como berço da escola de samba como instituição."},
+  {id:94,type:"mc",cat:"Cultura",diff:"easy",q:"Quem escreveu 'Iracema', o clássico sobre a origem do Ceará?",opts:["José de Alencar","Machado de Assis","Euclides da Cunha","Graciliano Ramos"],ans:0,exp:"José de Alencar (1829–1877) escreveu Iracema (1865). A índia Iracema e o português Martim geram Moacir — símbolo do povo cearense."},
+  {id:95,type:"mc",cat:"Ciência",diff:"hard",q:"O que Santos Dumont reivindicava ter inventado?",opts:["O motor a vapor","O avião com decolagem autônoma sem catapulta","O dirigível a hidrogênio","O submarino"],ans:1,exp:"O 14-Bis voou em Paris em 1906 — decolagem autônoma. Para os brasileiros, o pai da aviação."},
+  {id:96,type:"mc",cat:"Fauna",diff:"easy",q:"Qual é o pássaro nacional do Brasil?",opts:["Arara-azul","Tucano","Sabiá-laranjeira","Bem-te-vi"],ans:2,exp:"O sabiá-laranjeira (Turdus rufiventris) é o pássaro nacional desde 2002."},
+  {id:97,type:"mc",cat:"Economia",diff:"easy",q:"Qual é o maior porto da América Latina?",opts:["Porto de Santos (SP)","Porto de Paranaguá (PR)","Porto de Itajaí (SC)","Porto do Rio de Janeiro"],ans:0,exp:"O Porto de Santos movimenta mais de 130 milhões de toneladas por ano."},
+  {id:98,type:"mc",cat:"Natureza",diff:"easy",q:"Qual é o maior roedor do mundo?",opts:["Queixada","Capivara","Paca","Cutia"],ans:1,exp:"A capivara (Hydrochoerus hydrochaeris), até 65 kg. Muito abundante no Pantanal e em todo o Brasil."},
+  {id:99,type:"mc",cat:"Política",diff:"hard",q:"O que foi a 'política do café-com-leite'?",opts:["Acordo comercial entre Brasil e Argentina","Revezamento de presidentes entre SP (café) e MG (leite) na Primeira República","Política agrícola do Império","Programa de exportação do século XIX"],ans:1,exp:"SP e MG se revezavam na presidência durante a Primeira República. Getúlio Vargas rompeu esse acordo em 1930."},
+  {id:100,type:"mc",cat:"Cultura",diff:"medium",q:"O que é o candomblé?",opts:["Uma dança gaúcha","Religião afro-brasileira com raízes yorubá, fon e banto","Uma festa do folclore amazônico","Um ritual de origem portuguesa"],ans:1,exp:"O candomblé preserva os cultos aos orixás dos africanos escravizados. Salvador (BA) tem os terreiros mais tradicionais do Brasil."},
 ];
 
-const DIFF_TIME={easy:20,medium:15,hard:10};
-const DIFF_PTS={easy:10,medium:15,hard:25};
-const DIFF_LABEL={easy:"Fácil ★",medium:"Médio ★★",hard:"Difícil ★★★"};
-const CAT_COLORS={"Origem":"#2d6a4f","Colonização":"#8b4513","Política":"#1a3a6b","Natureza":"#2d6a4f","História":"#5c3317","Cultura":"#9b2335","Fauna":"#4a7c59","Território":"#1b7a8e","Indígenas":"#c27d38","Fronteiras":"#4a4a8a","Capitais":"#8b3a62","Economia":"#3d5a80","Ciência":"#0a4d68","Saúde":"#b5283e","Religião":"#7b5ea7","Arquitetura":"#c47e2b","Esporte":"#016301","Arte":"#c45c26","Água":"#0077b6","Música":"#6a0572","Identidade":"#c9a227"};
 const ACHIEVEMENTS=[
   {id:"first",icon:"🌱",label:"Primeiro Passo",desc:"Respondeu a primeira pergunta",cond:s=>s.total>=1},
   {id:"streak5",icon:"🔥",label:"Em Chamas",desc:"5 acertos seguidos",cond:s=>s.streak>=5},
-  {id:"fast",icon:"⚡",label:"Velocista",desc:"Respondeu em menos de 3 segundos",cond:s=>s.lastTime<=3&&s.lastOk},
+  {id:"fast",icon:"⚡",label:"Velocista",desc:"Acertou em menos de 3 segundos",cond:s=>s.lastTime<=3&&s.lastOk},
   {id:"perfect10",icon:"⭐",label:"Dez Perfeitos",desc:"10 acertos sem errar",cond:s=>s.streak>=10},
-  {id:"half",icon:"🌊",label:"Meio Caminho",desc:"50 perguntas respondidas",cond:s=>s.total>=50},
-  {id:"scholar",icon:"🎓",label:"Sábio do Brasil",desc:"80% de acertos com 20+ perguntas",cond:s=>s.total>=20&&(s.correct/s.total)>=0.8},
-  {id:"hard5",icon:"💎",label:"Corajoso",desc:"5 questões difíceis acertadas",cond:s=>s.hardCorrect>=5},
+  {id:"scholar",icon:"🎓",label:"Sábio do Brasil",desc:"80% de acertos",cond:s=>s.total>=10&&(s.correct/s.total)>=0.8},
+  {id:"hard3",icon:"💎",label:"Corajoso",desc:"3 questões difíceis acertadas",cond:s=>s.hardCorrect>=3},
 ];
 
+// ===== ESTADO =====
 let playerName="",queue=[],current=null,answered=false;
 let score=0,correct=0,streak=0,maxStreak=0,total=0,combo=0,hardCorrect=0;
 let timeLeft=0,timerMax=0,timerInt=null,lastTime=0,lastOk=false;
 let unlockedAch=[];
-
-try{unlockedAch=JSON.parse(localStorage.getItem("bcv2Ach")||"[]");}catch{}
+try{unlockedAch=JSON.parse(localStorage.getItem("bcAch3")||"[]");}catch{}
 
 function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
 function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
 
+// ===== PEIXE =====
+function resetFish(){
+  const f=document.getElementById('fish-emoji');
+  f.className='fish-idle';
+  f.textContent='🐟';
+  f.style.left='0px';
+}
+function escapeFish(){
+  const f=document.getElementById('fish-emoji');
+  f.className='fish-escaping';
+  f.textContent='🐟';
+}
+
+// ===== JOGO =====
 function startGame(){
   const n=document.getElementById('name-in').value.trim();
   if(!n){document.getElementById('name-in').focus();return;}
   playerName=n;
-  const q=shuffle(QUESTIONS);queue=q.slice(1);current=q[0];
+  const q=shuffle(QUESTIONS).slice(0,TOTAL_QS);
+  queue=q.slice(1);current=q[0];
   answered=false;score=0;correct=0;streak=0;maxStreak=0;total=0;combo=0;hardCorrect=0;
-  showScreen('game');renderQ();
+  showScreen('game');
+  renderQ();
 }
 
 function renderQ(){
-  const done=100-queue.length-1;
-  document.getElementById('q-count').textContent='Pergunta '+(done+1)+' de 100';
+  const done=TOTAL_QS-queue.length-1;
+  document.getElementById('q-count').textContent='Pergunta '+(done+1)+' de '+TOTAL_QS;
   document.getElementById('g-score').textContent=score;
   document.getElementById('g-streak').textContent=streak>=3?'🔥×'+streak:'';
-  document.getElementById('g-prog').style.width=Math.round((done/100)*100)+'%';
+  document.getElementById('g-prog').style.width=Math.round((done/TOTAL_QS)*100)+'%';
+
   const db=document.getElementById('diff-b');
   db.textContent=DIFF_LABEL[current.diff];
   db.className='diff-badge d-'+current.diff;
@@ -350,15 +450,21 @@ function renderQ(){
   cb.textContent=current.cat;cb.style.background=CAT_COLORS[current.cat]||'#2d6a4f';
   document.getElementById('type-lbl').textContent=current.type==='tf'?'· Verdadeiro ou Falso':'· Múltipla escolha';
   document.getElementById('q-txt').textContent=current.q;
+
   document.getElementById('tf-area').style.display='none';
   document.getElementById('mc-area').style.display='none';
   document.getElementById('exp-box').style.display='none';
   document.getElementById('btn-next').style.display='none';
+
   const tt=document.getElementById('tf-true'),tf=document.getElementById('tf-false');
-  tt.className='ans-btn';tt.disabled=false;tf.className='ans-btn';tf.disabled=false;
-  if(current.type==='tf'){document.getElementById('tf-area').style.display='grid';}
-  else{
-    const mc=document.getElementById('mc-area');mc.style.display='flex';mc.innerHTML='';
+  tt.className='ans-btn';tt.disabled=false;
+  tf.className='ans-btn';tf.disabled=false;
+
+  if(current.type==='tf'){
+    document.getElementById('tf-area').style.display='grid';
+  } else {
+    const mc=document.getElementById('mc-area');
+    mc.style.display='flex';mc.innerHTML='';
     const L=['A','B','C','D'];
     current.opts.forEach((o,i)=>{
       const b=document.createElement('button');b.className='ans-btn';b.dataset.idx=i;
@@ -366,9 +472,15 @@ function renderQ(){
       b.onclick=()=>answerMC(i);mc.appendChild(b);
     });
   }
+
+  resetFish();
   timerMax=DIFF_TIME[current.diff];timeLeft=timerMax;
   clearInterval(timerInt);updateTimer();
-  timerInt=setInterval(()=>{timeLeft=Math.max(0,timeLeft-0.1);updateTimer();if(timeLeft<=0){clearInterval(timerInt);timeExpired();}},100);
+  timerInt=setInterval(()=>{
+    timeLeft=Math.max(0,timeLeft-0.1);
+    updateTimer();
+    if(timeLeft<=0){clearInterval(timerInt);timeExpired();}
+  },100);
 }
 
 function updateTimer(){
@@ -379,9 +491,23 @@ function updateTimer(){
   const v=document.getElementById('t-val');
   v.textContent=Math.ceil(timeLeft)+'s';
   v.style.color=pct>50?'#a8d5b5':pct>25?'#ffd070':'#ff7070';
+
+  // Peixe se move da esquerda para a direita acompanhando o timer
+  const wrap=document.getElementById('fish-wrap');
+  const wrapW=wrap.offsetWidth||300;
+  const fishX=Math.round((1-(pct/100))*(wrapW-28));
+  const fish=document.getElementById('fish-emoji');
+  if(fish.className==='fish-idle'){
+    fish.style.left=fishX+'px';
+  }
 }
 
-function timeExpired(){if(!answered)processAns(false,-1);}
+function timeExpired(){
+  if(answered)return;
+  escapeFish();
+  // Pequeno delay para a animação aparecer antes de processar
+  setTimeout(()=>processAns(false,-1),800);
+}
 
 function answerTF(val){
   if(answered)return;clearInterval(timerInt);
@@ -411,6 +537,7 @@ function processAns(isOk,choice){
   streak=isOk?streak+1:0;combo=isOk?combo+1:0;
   maxStreak=Math.max(maxStreak,streak);
   if(isOk){correct++;if(current.diff==='hard')hardCorrect++;}
+
   let pts=0;
   if(isOk){
     const base=DIFF_PTS[current.diff];
@@ -419,16 +546,19 @@ function processAns(isOk,choice){
     const comboBonus=combo>=3?Math.floor(combo/3)*5:0;
     pts=base+timeBonus+comboBonus;score+=pts;
   }
+
   document.getElementById('g-score').textContent=score;
   document.getElementById('g-streak').textContent=streak>=3?'🔥×'+streak:'';
+
   const eb=document.getElementById('exp-box');
   eb.className='exp-box '+(isOk?'exp-ok':'exp-bad');eb.style.display='block';
-  let title=isOk?'✅ Correto! +'+pts+' pts':'❌ '+(choice===-1?'Tempo esgotado!':'Incorreto');
+  let title=isOk?'✅ Correto! +'+pts+' pts':'❌ '+(choice===-1?'Tempo esgotado! O peixe fugiu com a isca 🐟':'Incorreto');
   if(combo>=3&&isOk)title+=' (combo 🔥)';
   document.getElementById('exp-title').textContent=title;
   document.getElementById('exp-text').textContent=current.exp;
   document.getElementById('btn-next').style.display='block';
   document.getElementById('btn-next').textContent=queue.length===0?'Ver resultado →':'Próxima pergunta →';
+
   checkAch({total,correct,streak,lastTime:elapsed,lastOk:isOk,hardCorrect});
 }
 
@@ -438,10 +568,13 @@ function nextQuestion(){
 }
 
 function showResult(){
-  saveRanking();
+  saveToFirebase({
+    name:playerName,score,correct,total,maxStreak,
+    date:new Date().toLocaleDateString('pt-BR')
+  });
   const pct=Math.round((correct/total)*100);
   document.getElementById('res-medal').textContent=pct>=90?'🏆':pct>=70?'🥈':pct>=50?'🥉':'🌱';
-  document.getElementById('res-sub').textContent=playerName+', você explorou o Brasil inteiro!';
+  document.getElementById('res-sub').textContent=playerName+', você completou as '+TOTAL_QS+' perguntas!';
   document.getElementById('r-score').textContent=score;
   document.getElementById('r-corr').textContent=correct+'/'+total;
   document.getElementById('r-pct').textContent=pct+'%';
@@ -456,27 +589,33 @@ function confirmHome(){
   clearInterval(timerInt);showScreen('home');
 }
 
-function saveRanking(){
-  let r=[];try{r=JSON.parse(localStorage.getItem("bcv2Rank")||"[]");}catch{}
-  r.push({name:playerName,score,correct,total,maxStreak,date:new Date().toLocaleDateString('pt-BR')});
-  r.sort((a,b)=>b.score-a.score);r=r.slice(0,20);
-  try{localStorage.setItem("bcv2Rank",JSON.stringify(r));}catch{}
-}
-
-function showRanking(){
-  let r=[];try{r=JSON.parse(localStorage.getItem("bcv2Rank")||"[]");}catch{}
-  const el=document.getElementById('rank-list');
-  if(!r.length){el.innerHTML='<div class="rank-empty">Nenhuma partida ainda. Seja o primeiro!</div>';showScreen('ranking');return;}
-  const M=['🥇','🥈','🥉'];const RC=['rk-gold','rk-silver','rk-bronze','rk-normal'];
-  el.innerHTML=r.map((e,i)=>'<div class="rank-row '+RC[Math.min(i,3)]+'"><span class="rank-pos">'+(M[i]||((i+1)+'º'))+'</span><div style="flex:1"><div class="rank-name">'+e.name+'</div><div class="rank-detail">'+e.correct+'/'+e.total+' acertos · '+e.maxStreak+' seq. · '+e.date+'</div></div><span class="rank-pts">'+e.score+' pts</span></div>').join('');
+// ===== RANKING GLOBAL =====
+async function showRanking(){
   showScreen('ranking');
+  document.getElementById('rank-list').innerHTML='<div class="rank-status">Carregando ranking global...</div>';
+  const rows=await loadFromFirebase();
+  const el=document.getElementById('rank-list');
+  if(!rows.length){el.innerHTML='<div class="rank-status">Nenhuma partida ainda. Seja o primeiro!</div>';return;}
+  const M=['🥇','🥈','🥉'];
+  const RC=['rk-gold','rk-silver','rk-bronze','rk-normal'];
+  el.innerHTML=rows.map((e,i)=>`
+    <div class="rank-row ${RC[Math.min(i,3)]}">
+      <span class="rank-pos">${M[i]||(i+1)+'º'}</span>
+      <div style="flex:1">
+        <div class="rank-name">${(e.name||'?').substring(0,20)}</div>
+        <div class="rank-detail">${e.correct||0}/${e.total||20} acertos · seq.${e.maxStreak||0} · ${e.date||''}</div>
+      </div>
+      <span class="rank-pts">${e.score} pts</span>
+    </div>
+  `).join('');
 }
 
+// ===== CONQUISTAS =====
 function checkAch(s){
   ACHIEVEMENTS.forEach(a=>{
     if(!unlockedAch.includes(a.id)&&a.cond(s)){
       unlockedAch.push(a.id);
-      try{localStorage.setItem("bcv2Ach",JSON.stringify(unlockedAch));}catch{}
+      try{localStorage.setItem("bcAch3",JSON.stringify(unlockedAch));}catch{}
       showToast(a);
     }
   });
